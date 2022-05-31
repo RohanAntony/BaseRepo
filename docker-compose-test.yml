@@ -1,0 +1,19 @@
+version: '3'
+services:
+  dev_web_test:
+    build:
+      context: web
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /home/node/app/node_modules
+      - ./web:/home/node/app
+    command: ["npm", "run", "test"]
+  dev_api_test:
+    build:
+      context: api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /home/node/app/node_modules
+      - ./api:/home/node/app
+    environment:
+      - PORT=5000 

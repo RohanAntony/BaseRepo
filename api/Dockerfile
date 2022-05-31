@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:alpine AS builder
 USER node
 
 RUN mkdir -p /home/node/app
@@ -8,4 +8,4 @@ COPY --chown=node:node ./package.json .
 RUN npm install
 COPY --chown=node:node . .
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]

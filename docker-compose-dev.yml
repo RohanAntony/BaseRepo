@@ -1,19 +1,37 @@
 version: '3'
 services:
-  react-app:
+  dev_db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_PASSWORD=mysecretpass
+  dev_redis:
+    image: redis:alpine
+  dev_web:
     build:
-      context: .
+      context: web
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /home/node/app/node_modules
+      - ./web:/home/node/app
+  dev_api:
+    build:
+      context: api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /home/node/app/node_modules
+      - ./api:/home/node/app
+    environment:
+      - PORT=5000
+    depends_on:
+      - dev_db
+      - dev_redis
+  dev_nginx:
+    restart: always
+    build: 
+      context: nginx
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"
-    volumes:
-      - /home/node/app/node_modules
-      - .:/home/node/app
-  tests:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    volumes:
-      - /home/node/app/node_modules
-      - .:/home/node/app
-    command: ["npm", "run", "test"]
+      - '3050:80'
+    depends_on:
+      - dev_api
+      - dev_web
