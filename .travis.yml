@@ -3,11 +3,22 @@ language: generic
 services:
   - docker
 
-# before_install:
-#   - docker build -t base-repo -f Dockerfile.dev .
+before_install:
+  - cd web && docker build -t base_repo_web -f ./Dockerfile.dev . && cd ..
 
-# script: 
-#   - docker run -e CI=true base-repo npm run test 
+script: 
+  - docker run -e CI=true base_repo_web npm run test 
+
+after_success:
+  - cd web && docker build -t rantony/base_repo_web && cd ..
+  - cd api && docker build -t rantony/base_repo_api && cd ..
+  - cd nginx && docker build -t rantony/base_repo_nginx && cd ..
+  # Log in to Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take the images and push to Github CLI
+  - docker push -t rantony/base_repo_web
+  - docker push -t rantony/base_repo_api
+  - docker push -t rantony/base_repo_nginx
 
 # deploy:
 #   provider: elasticbeanstalk
