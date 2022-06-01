@@ -10,15 +10,15 @@ script:
   - docker run -e CI=true base_repo_web npm run test 
 
 after_success:
-  - cd web && docker build -t rantony/base_repo_web && cd ..
-  - cd api && docker build -t rantony/base_repo_api && cd ..
-  - cd nginx && docker build -t rantony/base_repo_nginx && cd ..
+  - cd web && docker build -t $DOCKER_ID/base_repo_web . && cd ..
+  - cd api && docker build -t $DOCKER_ID/base_repo_api . && cd ..
+  - cd nginx && docker build -t $DOCKER_ID/base_repo_nginx . && cd ..
   # Log in to Docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take the images and push to Github CLI
-  - docker push -t rantony/base_repo_web
-  - docker push -t rantony/base_repo_api
-  - docker push -t rantony/base_repo_nginx
+  - docker push $DOCKER_ID/base_repo_web
+  - docker push $DOCKER_ID/base_repo_api
+  - docker push $DOCKER_ID/base_repo_nginx
 
 # deploy:
 #   provider: elasticbeanstalk
